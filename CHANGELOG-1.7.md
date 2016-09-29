@@ -1,5 +1,9 @@
 # 1.7
 
+## Bug fixes
+
+- PIM-5983: Fix the product import to update only prices specified with a currency value
+
 ## Functional improvements
 
 - Change the loading message by a more humanized message to share our love.
