@@ -13,7 +13,7 @@
             "": "src/",
             "Context": "features/",
             "Pim\\Behat": "features/",
-            "Pim\\Integration": "features/"
+            "Integration": "integration/"
         },
         "psr-4": {
             "Pim\\Upgrade\\": "upgrades/"
