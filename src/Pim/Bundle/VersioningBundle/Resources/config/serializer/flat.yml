@@ -36,17 +36,9 @@ parameters:
     pim_serializer.denormalizer.flat.file.class:              Pim\Bundle\VersioningBundle\Denormalizer\Flat\ProductValue\FileDenormalizer
 
 services:
-#    pim_versioning.serializer.normalizer.flat.product:
-#        public: false
-#        class: '%pim_serializer.normalizer.flat.product.class%'
-#        tags:
-#            - { name: pim_versioning.serializer.normalizer, priority: 90 }
-
     pim_versioning.serializer.normalizer.flat.product:
         public: false
         class: '%pim_serializer.normalizer.flat.product.class%'
-        arguments:
-            - '@pim_catalog.normalizer.standard.product'
         tags:
             - { name: pim_versioning.serializer.normalizer, priority: 90 }
 
@@ -68,6 +60,7 @@ services:
     pim_versioning.serializer.normalizer.flat.attribute:
         class: '%pim_serializer.normalizer.flat.attribute.class%'
         arguments:
+            - '@pim_catalog.normalizer.standard.attribute'
             - '@pim_versioning.serializer.normalizer.flat.label_translation'
         tags:
             - { name: pim_versioning.serializer.normalizer, priority: 90 }
