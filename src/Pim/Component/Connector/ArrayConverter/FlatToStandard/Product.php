@@ -17,7 +17,11 @@ use Pim\Component\Connector\Exception\StructureArrayConversionException;
 
 /**
  * Convert a Product from Flat to Standard structure.
- * This conversion does not result in the standard format, as the values are not delocalized here.
+ *
+ * This conversion does not result in the standard format. The structure is respected but data are not.
+ * Firstly, the data are not delocalized here.
+ * Then numeric attributes (metric, price, number) which may contain decimals, are not converted to string but remains float,
+ * to be compatible with XLSX files and localization.
  *
  * To get a real standardized from the flat format, please
  * see {@link \Pim\Component\Connector\ArrayConverter\FlatToStandard\ProductDelocalized }

@@ -26,10 +26,11 @@ class MetricConverterSpec extends ObjectBehavior
     function it_does_not_convert_when_only_data_is_provided(AttributeInterface $attribute)
     {
         $attribute->getCode()->willReturn('attribute_code');
-        $fieldNameInfo = ['attribute'   => $attribute,
-                          'locale_code' => 'en_US',
-                          'scope_code'  => 'mobile',
-                          'metric_unit' => 'EUR'
+        $fieldNameInfo = [
+            'attribute'   => $attribute,
+            'locale_code' => 'en_US',
+            'scope_code'  => 'mobile',
+            'metric_unit' => 'GRAM'
         ];
 
         $value = 4.1125;
@@ -46,14 +47,15 @@ class MetricConverterSpec extends ObjectBehavior
     function it_converts_and_split_value($fieldSplitter, AttributeInterface $attribute)
     {
         $attribute->getCode()->willReturn('attribute_code');
-        $fieldNameInfo = ['attribute'   => $attribute,
-                          'locale_code' => 'en_US',
-                          'scope_code'  => 'mobile'
+        $fieldNameInfo = [
+            'attribute'   => $attribute,
+            'locale_code' => 'en_US',
+            'scope_code'  => 'mobile'
         ];
 
-        $value = '4.1125 EUR';
+        $value = '4.1125 GRAM';
 
-        $fieldSplitter->splitUnitValue($value)->willReturn(['4.1125', 'EUR']);
+        $fieldSplitter->splitUnitValue($value)->willReturn(['4.1125', 'GRAM']);
 
         $expectedResult = ['attribute_code' => [[
             'locale' => 'en_US',
@@ -75,6 +77,116 @@ class MetricConverterSpec extends ObjectBehavior
             'locale' => 'en_US',
             'scope'  => 'mobile',
             'data'   => null,
+        ]]];
+
+        $this->convert($fieldNameInfo, $value)->shouldReturn($expectedResult);
+    }
+
+    function it_converts_integer_value($fieldSplitter, AttributeInterface $attribute)
+    {
+        $attribute->getCode()->willReturn('attribute_code');
+        $fieldNameInfo = [
+            'attribute'   => $attribute,
+            'locale_code' => 'en_US',
+            'scope_code'  => 'mobile'
+        ];
+
+        $value = '41125 GRAM';
+
+        $fieldSplitter->splitUnitValue($value)->willReturn([41125, 'GRAM']);
+
+        $expectedResult = ['attribute_code' => [[
+            'locale' => 'en_US',
+            'scope'  => 'mobile',
+            'data'   => ['amount' => 41125, 'unit' => 'GRAM'],
+        ]]];
+
+        $this->convert($fieldNameInfo, $value)->shouldReturn($expectedResult);
+    }
+
+    function it_converts_integer_value_formatted_as_string($fieldSplitter, AttributeInterface $attribute)
+    {
+        $attribute->getCode()->willReturn('attribute_code');
+        $fieldNameInfo = [
+            'attribute'   => $attribute,
+            'locale_code' => 'en_US',
+            'scope_code'  => 'mobile'
+        ];
+
+        $value = '41125 GRAM';
+
+        $fieldSplitter->splitUnitValue($value)->willReturn(['41125', 'GRAM']);
+
+        $expectedResult = ['attribute_code' => [[
+            'locale' => 'en_US',
+            'scope'  => 'mobile',
+            'data'   => ['amount' => 41125, 'unit' => 'GRAM'],
+        ]]];
+
+        $this->convert($fieldNameInfo, $value)->shouldReturn($expectedResult);
+    }
+
+    function it_converts_decimal_value($fieldSplitter, AttributeInterface $attribute)
+    {
+        $attribute->getCode()->willReturn('attribute_code');
+        $fieldNameInfo = [
+            'attribute'   => $attribute,
+            'locale_code' => 'en_US',
+            'scope_code'  => 'mobile'
+        ];
+
+        $value = '4.1125 GRAM';
+
+        $fieldSplitter->splitUnitValue($value)->willReturn([4.1125, 'GRAM']);
+
+        $expectedResult = ['attribute_code' => [[
+            'locale' => 'en_US',
+            'scope'  => 'mobile',
+            'data'   => ['amount' => '4.1125', 'unit' => 'GRAM'],
+        ]]];
+
+        $this->convert($fieldNameInfo, $value)->shouldReturn($expectedResult);
+    }
+
+    function it_converts_decimal_value_formatted_as_string($fieldSplitter, AttributeInterface $attribute)
+    {
+        $attribute->getCode()->willReturn('attribute_code');
+        $fieldNameInfo = [
+            'attribute'   => $attribute,
+            'locale_code' => 'en_US',
+            'scope_code'  => 'mobile'
+        ];
+
+        $value = '4.1125 GRAM';
+
+        $fieldSplitter->splitUnitValue($value)->willReturn(['4.1125', 'GRAM']);
+
+        $expectedResult = ['attribute_code' => [[
+            'locale' => 'en_US',
+            'scope'  => 'mobile',
+            'data'   => ['amount' => '4.1125', 'unit' => 'GRAM'],
+        ]]];
+
+        $this->convert($fieldNameInfo, $value)->shouldReturn($expectedResult);
+    }
+
+    function it_converts_french_decimal_value($fieldSplitter, AttributeInterface $attribute)
+    {
+        $attribute->getCode()->willReturn('attribute_code');
+        $fieldNameInfo = [
+            'attribute'   => $attribute,
+            'locale_code' => 'en_US',
+            'scope_code'  => 'mobile'
+        ];
+
+        $value = '4,1125 GRAM';
+
+        $fieldSplitter->splitUnitValue($value)->willReturn(['4,1125', 'GRAM']);
+
+        $expectedResult = ['attribute_code' => [[
+            'locale' => 'en_US',
+            'scope'  => 'mobile',
+            'data'   => ['amount' => '4,1125', 'unit' => 'GRAM'],
         ]]];
 
         $this->convert($fieldNameInfo, $value)->shouldReturn($expectedResult);
