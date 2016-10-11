@@ -3,7 +3,8 @@
 namespace Pim\Bundle\VersioningBundle\Normalizer\Flat;
 
 use Pim\Component\Catalog\Model\AssociationTypeInterface;
-use Pim\Component\Catalog\Normalizer\Structured\AssociationTypeNormalizer as BaseNormalizer;
+use Pim\Component\Catalog\Normalizer\Standard\AssociationTypeNormalizer as StandardNormalizer;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * Flat association type normalizer
@@ -12,21 +13,58 @@ use Pim\Component\Catalog\Normalizer\Structured\AssociationTypeNormalizer as Bas
  * @copyright 2013 Akeneo SAS (http://www.akeneo.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-class AssociationTypeNormalizer extends BaseNormalizer
+class AssociationTypeNormalizer implements NormalizerInterface
 {
     /** @var string[] */
-    protected $supportedFormats = ['csv'];
+    protected $supportedFormats = ['flat'];
+
+    /** @var TranslationNormalizer */
+    protected $translationNormalizer;
+
+    /** @var CategoryNormalizer */
+    protected $standardNormalizer;
+
+    /**
+     * @param StandardNormalizer    $standardNormalizer
+     * @param TranslationNormalizer $translationNormalizer
+     */
+    public function __construct(
+        StandardNormalizer $standardNormalizer,
+        TranslationNormalizer $translationNormalizer
+    ) {
+        $this->standardNormalizer = $standardNormalizer;
+        $this->translationNormalizer = $translationNormalizer;
+    }
 
     /**
      * {@inheritdoc}
      */
-    protected function normalizeLabel(AssociationTypeInterface $associationType)
+    public function normalize($object, $format = null, array $context = [])
     {
-        $values = [];
-        foreach ($associationType->getTranslations() as $translation) {
-            $values[sprintf('label-%s', $translation->getLocale())] = $translation->getLabel();
+        if (!$this->standardNormalizer->supportsNormalization($object, 'standard')) {
+            return null;
         }
 
-        return $values;
+        $standardAssociationType = $this->standardNormalizer->normalize($object, 'standard', $context);
+        $flatAssociationType = $standardAssociationType;
+
+        unset($flatAssociationType['labels']);
+        if ($this->translationNormalizer->supportsNormalization($standardAssociationType['labels'], 'flat')) {
+            $flatAssociationType += $this->translationNormalizer->normalize(
+                $standardAssociationType['labels'],
+                'flat',
+                $context
+            );
+        }
+
+        return $flatAssociationType;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsNormalization($data, $format = null)
+    {
+        return $data instanceof AssociationTypeInterface && in_array($format, $this->supportedFormats);
     }
 }
