@@ -2,8 +2,10 @@
 
 namespace Pim\Bundle\VersioningBundle\Normalizer\Flat;
 
+use Gedmo\Translatable\Document\Translation;
 use Pim\Component\Catalog\Model\ChannelInterface;
-use Pim\Component\Catalog\Normalizer\Structured\ChannelNormalizer as BaseNormalizer;
+use Pim\Component\Catalog\Normalizer\Standard\ChannelNormalizer as StandardNormalizer;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * A normalizer to transform a channel entity into a flat array
@@ -12,58 +14,86 @@ use Pim\Component\Catalog\Normalizer\Structured\ChannelNormalizer as BaseNormali
  * @copyright 2013 Akeneo SAS (http://www.akeneo.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-class ChannelNormalizer extends BaseNormalizer
+class ChannelNormalizer implements NormalizerInterface
 {
+    const ITEM_SEPARATOR = ',';
+
     /** @var string[] */
-    protected $supportedFormats = ['csv', 'flat'];
+    protected $supportedFormats = ['flat'];
+
+    /** @var StandardNormalizer */
+    protected $standardNormalizer;
+
+    /** @var TranslationNormalizer */
+    protected $translationNormalizer;
+
+    /**
+     * ChannelNormalizer constructor.
+     *
+     * @param StandardNormalizer    $standardNormalizer
+     * @param TranslationNormalizer $translationNormalizer
+     */
+    public function __construct(
+        StandardNormalizer $standardNormalizer,
+        TranslationNormalizer $translationNormalizer
+    ) {
+        $this->standardNormalizer = $standardNormalizer;
+        $this->translationNormalizer = $translationNormalizer;
+    }
 
     /**
      * {@inheritdoc}
      *
      * @param $object ChannelInterface
+     *
+     * @return array
      */
     public function normalize($object, $format = null, array $context = [])
     {
-        return [
-            'code'       => $object->getCode(),
-            'label'      => $this->normalizeLabel($object),
-            'currencies' => $this->normalizeCurrencies($object),
-            'locales'    => $this->normalizeLocales($object),
-            'category'   => $this->normalizeCategoryTree($object),
-        ];
+        if (!$this->standardNormalizer->supportsNormalization($object, 'standard')) {
+            return null;
+        }
+
+        $standardChannel = $this->standardNormalizer->normalize($object, 'standard', $context);
+
+        $flatChannel = $standardChannel;
+        $flatChannel['currencies'] = implode(self::ITEM_SEPARATOR, $standardChannel['currencies']);
+        $flatChannel['locales'] = implode(self::ITEM_SEPARATOR, $standardChannel['locales']);
+
+        unset($flatChannel['labels']);
+        if ($this->translationNormalizer->supportsNormalization($standardChannel['labels'], 'flat')) {
+            $flatChannel += $this->translationNormalizer->normalize($standardChannel['labels'], 'flat', $context);
+        }
+
+        unset($flatChannel['conversion_units']);
+        $flatChannel += $this->normalizeConversionUnits($standardChannel['conversion_units']);
+
+        return $flatChannel;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function normalizeCurrencies(ChannelInterface $channel)
+    public function supportsNormalization($data, $format = null)
     {
-        $currencies = parent::normalizeCurrencies($channel);
-        asort($currencies);
-
-        return implode(',', $currencies);
+        return $data instanceof ChannelInterface && in_array($format, $this->supportedFormats);
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function normalizeLocales(ChannelInterface $channel)
-    {
-        $locales = parent::normalizeLocales($channel);
-        asort($locales);
-
-        return implode(',', $locales);
-    }
-
-    /**
-     * Returns category tree code
+     * Normalizes the conversion units into a flat array
      *
-     * @param ChannelInterface $channel
+     * @param array $conversionUnits
      *
-     * @return string
+     * @return array
      */
-    protected function normalizeCategoryTree(ChannelInterface $channel)
+    protected function normalizeConversionUnits($conversionUnits)
     {
-        return $channel->getCategory()->getCode();
+        $flatArray = [];
+
+        foreach ($conversionUnits as $unitType => $unit) {
+            $flatArray['conversion_unit-'.$unitType] = $unit;
+        }
+
+        return $flatArray;
     }
 }
