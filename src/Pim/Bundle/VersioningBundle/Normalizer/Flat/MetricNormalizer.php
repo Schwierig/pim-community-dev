@@ -3,6 +3,7 @@
 namespace Pim\Bundle\VersioningBundle\Normalizer\Flat;
 
 use Pim\Component\Catalog\Model\MetricInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * Normalize a metric data
@@ -11,18 +12,11 @@ use Pim\Component\Catalog\Model\MetricInterface;
  * @copyright 2014 Akeneo SAS (http://www.akeneo.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-class MetricNormalizer extends AbstractProductValueDataNormalizer
+class MetricNormalizer implements NormalizerInterface
 {
     /** @var string[] */
-    protected $supportedFormats = ['csv', 'flat'];
+    protected $supportedFormats = ['flat'];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsNormalization($data, $format = null)
-    {
-        return $data instanceof MetricInterface && in_array($format, $this->supportedFormats);
-    }
 
     /**
      * {@inheritdoc}
@@ -55,8 +49,9 @@ class MetricNormalizer extends AbstractProductValueDataNormalizer
     /**
      * {@inheritdoc}
      */
-    public function doNormalize($object, $format = null, array $context = [])
+    public function supportsNormalization($data, $format = null)
     {
+        return $data instanceof MetricInterface && in_array($format, $this->supportedFormats);
     }
 
     /**
