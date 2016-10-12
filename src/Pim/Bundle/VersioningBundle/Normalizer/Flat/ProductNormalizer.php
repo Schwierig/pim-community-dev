@@ -29,12 +29,19 @@ class ProductNormalizer implements NormalizerInterface
     /** @var StandardNormalizer */
     protected $standardNormalizer;
 
+    /** @var ProductValueNormalizer */
+    protected $productValueNormalizer;
+
     /**
-     * @param StandardNormalizer $standardNormalizer
+     * @param StandardNormalizer     $standardNormalizer
+     * @param ProductValueNormalizer $productValueNormalizer
      */
-    public function __construct(StandardNormalizer $standardNormalizer)
-    {
+    public function __construct(
+        StandardNormalizer $standardNormalizer,
+        ProductValueNormalizer $productValueNormalizer
+    ) {
         $this->standardNormalizer = $standardNormalizer;
+        $this->productValueNormalizer = $productValueNormalizer;
     }
 
     /**
@@ -88,5 +95,18 @@ class ProductNormalizer implements NormalizerInterface
         }
 
         return $flatAssociations;
+    }
+
+    /**
+     * Normalizes the product values with the corresponding normalizers
+     *
+     * @param array $values
+     *
+     * @return array
+     *
+     */
+    protected function normalizeValues($values)
+    {
+        return [];
     }
 }

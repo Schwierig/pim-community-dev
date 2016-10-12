@@ -2,21 +2,9 @@
 
 namespace spec\Pim\Bundle\VersioningBundle\Normalizer\Flat;
 
-use Doctrine\Common\Collections\Collection;
 use PhpSpec\ObjectBehavior;
-use Pim\Bundle\CatalogBundle\Filter\CollectionFilterInterface;
-use Pim\Component\Catalog\Model\Association;
-use Pim\Component\Catalog\Model\AssociationTypeInterface;
-use Pim\Component\Catalog\Model\AttributeInterface;
-use Pim\Component\Catalog\Model\AttributeOptionInterface;
-use Pim\Component\Catalog\Model\FamilyInterface;
-use Pim\Component\Catalog\Model\GroupInterface;
 use Pim\Component\Catalog\Model\ProductInterface;
-use Pim\Component\Catalog\Model\ProductPriceInterface;
-use Pim\Component\Catalog\Model\ProductValueInterface;
 use Pim\Component\Catalog\Normalizer\Standard\ProductNormalizer;
-use Prophecy\Argument;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class ProductNormalizerSpec extends ObjectBehavior
 {
@@ -35,7 +23,7 @@ class ProductNormalizerSpec extends ObjectBehavior
         $this->shouldImplement('Symfony\Component\Serializer\Normalizer\NormalizerInterface');
     }
 
-    function it_supports_csv_normalization_of_product(ProductInterface $product)
+    function it_supports_flat_normalization_of_product(ProductInterface $product)
     {
         $this->supportsNormalization($product, 'flat')->shouldBe(true);
         $this->supportsNormalization($product, 'csv')->shouldBe(false);
@@ -182,6 +170,7 @@ class ProductNormalizerSpec extends ObjectBehavior
                 ]
             ]
         );
+
         $this->normalize($product, 'flat', ['price-EUR' => ''])->shouldReturn(
             [
                 'price-EUR'  => '356.00',
