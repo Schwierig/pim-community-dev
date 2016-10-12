@@ -5,7 +5,6 @@
 .AkbemDropdown {
   position: relative;
   display: inline-block;
-  z-index: 850; // TODO Due to datagrid z-index, to remove.
 
   &-button {
     height: @littleButtonsHeight;
@@ -20,11 +19,18 @@
     vertical-align: middle;
     display: inline-block;
     cursor: pointer;
+    white-space: nowrap;
 
     &--noRightBorder {
       border-right: none;
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
+    }
+
+    &--noLeftBorder {
+      border-left: none;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
     }
   }
 
