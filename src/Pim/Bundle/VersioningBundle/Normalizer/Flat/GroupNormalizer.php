@@ -38,6 +38,10 @@ class GroupNormalizer implements NormalizerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param GroupInterface $object
+     *
+     * @return array
      */
     public function normalize($object, $format = null, array $context = [])
     {

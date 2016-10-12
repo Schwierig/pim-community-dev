@@ -31,6 +31,10 @@ class CollectionNormalizer extends SerializerAwareNormalizer implements Normaliz
 
     /**
      * {@inheritdoc}
+     *
+     * @param CollectionInterface $channel
+     *
+     * @return array
      */
     public function normalize($object, $format = null, array $context = [])
     {

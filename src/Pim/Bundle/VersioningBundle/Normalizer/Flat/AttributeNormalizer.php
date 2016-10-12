@@ -82,6 +82,10 @@ class AttributeNormalizer implements NormalizerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param AttributeInterface $object
+     *
+     * @return array
      */
     protected function normalizeOptions(AttributeInterface $attribute)
     {

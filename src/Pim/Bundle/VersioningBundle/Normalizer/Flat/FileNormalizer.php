@@ -28,6 +28,8 @@ class FileNormalizer extends AbstractProductValueDataNormalizer
 
     /**
      * {@inheritdoc}
+     *
+     * @return array
      */
     public function normalize($file, $format = null, array $context = [])
     {

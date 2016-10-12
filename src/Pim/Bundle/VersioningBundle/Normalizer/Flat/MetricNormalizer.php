@@ -22,6 +22,8 @@ class MetricNormalizer implements NormalizerInterface
      * {@inheritdoc}
      *
      * @param MetricInterface $object
+     *
+     * @return array
      */
     public function normalize($object, $format = null, array $context = [])
     {

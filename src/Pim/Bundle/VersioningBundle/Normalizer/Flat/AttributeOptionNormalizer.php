@@ -42,7 +42,7 @@ class AttributeOptionNormalizer implements NormalizerInterface
     /**
      * {@inheritdoc}
      *
-     * @param AttributeInterface $object
+     * @param AttributeOptionInterface $object
      *
      * @return array
      */

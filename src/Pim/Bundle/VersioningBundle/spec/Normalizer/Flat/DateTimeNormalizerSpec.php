@@ -11,7 +11,7 @@ class DateTimeNormalizerSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf('Symfony\Component\Serializer\Normalizer\NormalizerInterface');
     }
 
-    function it_supports_csv_normalization_of_date()
+    function it_supports_flat_normalization_of_date()
     {
         $this->supportsNormalization(new \DateTime(), 'csv')->shouldBe(true);
     }

@@ -48,6 +48,8 @@ class ProductNormalizer implements NormalizerInterface
      * {@inheritdoc}
      *
      * @param ProductInterface $object
+     *
+     * @return array
      */
     public function normalize($object, $format = null, array $context = [])
     {

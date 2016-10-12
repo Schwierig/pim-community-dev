@@ -41,6 +41,10 @@ class AttributeGroupNormalizer implements NormalizerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param AttributeGroupInterface $object
+     *
+     * @return array
      */
     public function normalize($object, $format = null, array $context = [])
     {
