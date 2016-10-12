@@ -37,7 +37,7 @@ class ProductValueNormalizerSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf('Symfony\Component\Serializer\SerializerAwareInterface');
     }
 
-    function it_supports_csv_normalization_of_product_value(ProductValueInterface $value)
+    function it_supports_flat_normalization_of_product_value(ProductValueInterface $value)
     {
         $this->supportsNormalization($value, 'csv')->shouldBe(true);
     }
