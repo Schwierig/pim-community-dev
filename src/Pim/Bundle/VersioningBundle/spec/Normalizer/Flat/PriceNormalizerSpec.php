@@ -12,7 +12,7 @@ class PriceNormalizerSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf('Symfony\Component\Serializer\Normalizer\NormalizerInterface');
     }
 
-    function it_supports_csv_normalization_of_product_price(ProductPriceInterface $price)
+    function it_supports_flat_normalization_of_product_price(ProductPriceInterface $price)
     {
         $this->supportsNormalization($price, 'csv')->shouldBe(true);
     }
