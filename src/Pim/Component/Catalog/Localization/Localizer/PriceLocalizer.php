@@ -26,7 +26,7 @@ class PriceLocalizer extends NumberLocalizer
             }
         }
 
-        return ($violations->count() > 0) ? $violations : null;
+        return $violations;
     }
 
     /**
